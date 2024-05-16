@@ -7,13 +7,24 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('/item')
-  async getItemList(
-    @Query() query: GetItemList
-  ) {
+  async getItemList(@Query() query: GetItemList) {
     try {
       const result = await this.appService.getItemList(query.itemTypeId);
       const modelRes = {
-        data: result
+        data: result,
+      };
+      return modelRes;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get('/coupon')
+  async getCoupon() {
+    try {
+      const result = await this.appService.getCoupon();
+      const modelRes = {
+        data: result,
       };
       return modelRes;
     } catch (error) {
@@ -22,12 +33,13 @@ export class AppController {
   }
 
   @Post('/purchase')
-  async buyItem(
-    @Body() body: PurchaseItem
-  ) {
+  async buyItem(@Body() body: PurchaseItem) {
     try {
       const result = await this.appService.summaryCalculate(body);
-      return result;
+      const modelRes = {
+        data: result,
+      };
+      return modelRes;
     } catch (error) {
       throw error;
     }

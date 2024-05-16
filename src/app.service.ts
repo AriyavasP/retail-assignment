@@ -20,9 +20,9 @@ export class AppService {
     private readonly campaignRepository: Repository<Campaign>,
   ) {}
 
-  async getItemList(category: number): Promise<Item[]> {
+  async getItemList(category: number): Promise<any[]> {
     try {
-      let data: Item[];
+      let data: any[];
       if (category) {
         data = await this.itemRepository.find({
           where: {
@@ -30,9 +30,30 @@ export class AppService {
               itemTypeId: category,
             },
           },
+          relations: ['itemType'],
+          select: {
+            itemId: true,
+            itemCode: true,
+            itemPrice: true,
+            itemType: {
+              itemTypeId: true,
+              itemTypeName: true,
+            },
+          },
         });
       } else {
-        data = await this.itemRepository.find();
+        data = await this.itemRepository.find({
+          relations: ['itemType'],
+          select: {
+            itemId: true,
+            itemCode: true,
+            itemPrice: true,
+            itemType: {
+              itemTypeId: true,
+              itemTypeName: true,
+            },
+          },
+        });
       }
       return data;
     } catch (error) {
@@ -40,8 +61,20 @@ export class AppService {
     }
   }
 
-  async summaryCalculate(purchaseData: PurchaseItem) {
+  async summaryCalculate(purchaseData: PurchaseItem): Promise<Object> {
     try {
+      const iCheck = await this.itemRepository.find();
+      let isBl;
+      purchaseData.cartList.forEach((el) => {
+        let isCheck = iCheck.find((i) => i.itemId === el.itemId);
+        if (isCheck.itemPrice !== el.price) {
+          isBl = 1;
+        }
+      });
+      if (isBl === 1) {
+        return 'Wong price input';
+      }
+
       let price: number = purchaseData.cartList.reduce((a, b) => {
         return a + b.price * b.quantity;
       }, 0);
@@ -50,7 +83,7 @@ export class AppService {
         onTop: 0,
         member: 0,
         seasonal: 0,
-        lastedDiscount: 0,
+        lastedPrice: 0,
       };
       let where;
       // section one coupon
@@ -118,11 +151,13 @@ export class AppService {
           campaignDateEnd: MoreThanOrEqual(currentDate),
         },
       });
-      discountModel.seasonal = campaing.map((item) => {
-        let round = Math.floor(price / item.campaignEveryAmount);
-        return round * item.campaignAmount;
-      }).reduce((a,b) => a + b, 0);
-      discountModel.lastedDiscount = price - discountModel.seasonal;
+      discountModel.seasonal = campaing
+        .map((item) => {
+          let round = Math.floor(price / item.campaignEveryAmount);
+          return round * item.campaignAmount;
+        })
+        .reduce((a, b) => a + b, 0);
+      discountModel.lastedPrice = price - discountModel.seasonal;
 
       return discountModel;
     } catch (error) {
@@ -184,6 +219,15 @@ export class AppService {
       }
 
       return { totalPriceForEachItem, memberDiscount: mDiscount };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCoupon(): Promise<Coupon[]> {
+    try {
+      const data: Coupon[] = await this.couponRepository.find();
+      return data;
     } catch (error) {
       throw error;
     }

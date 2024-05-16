@@ -1,73 +1,81 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+  
+
+<h1>Not has unit-test and business validate</h1>
+<h3>step play calculate discount.</h3>
+<h4>1. get list product</h4>
+curl --location 'http://localhost:3000/api/v1/item'
+<h4>2. get list coupon</h4>
+curl --location 'http://localhost:3000/api/v1/item'
+<h4>3. Enter the information obtained to calculate the discount </h4>
+<p>parameter coupon is optional</p>
+<p>parameter memberPoint is optional</p>
+curl --location 'http://localhost:3000/api/v1/purchase' \
+--header 'Content-Type: application/json' \
+--data '{
+    "coupon": "ABCDFG",
+    "memberPoint": 100,
+    "cartList": [
+        {
+            "itemId": 1,
+            "quantity": 2,
+            "price": 250
+        },
+                {
+            "itemId": 3,
+            "quantity": 1,
+            "price": 300
+        }
+    ]
+}'
+<h4>4. calculate discount for coupon -> on top -> seasonal</h4>
+<p>ex: JSON result<p>
+{
+    "data": {
+        "coupon": 300,
+        "onTop": 30,
+        "member": 100,
+        "seasonal": 20,
+        "lastedPrice": 350
+    }
+}
+Can be added in the future.
+Sure, I can rephrase your requirements in English:
+
+1. Can the relationship between the `coupon` table and the `item` table be set to a one-to-many (1toM) relationship? This would allow you to exclude certain items from the coupon's eligibility, effectively removing the ability to use that coupon on specific items.
+
+2. Additionally, you want to add a many-to-one (MtoN) relationship between the `itemType` table and the `item` table.
+
+3. The `campaign` table will be used to restrict campaigns to specific categories. In other words, a campaign can be limited to apply only to certain categories of items.
+
+In summary, you want to:
+
+1. Set up a one-to-many relationship between the `coupon` and `item` tables to exclude certain items from coupon eligibility.
+2. Create a many-to-one relationship between the `itemType` and `item` tables.
+3. Use the `campaign` table to restrict campaigns to specific categories of items.
+
+Let me know if this English rephrasing accurately captures your requirements. 
 
 ## Installation
 
+  
+
 ```bash
-$ npm install
+
+$  npm  install
+
 ```
+
+  
 
 ## Running the app
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
+  
 
 ```bash
-# unit tests
-$ npm run test
 
-# e2e tests
-$ npm run test:e2e
+$  npm  run  start
 
-# test coverage
-$ npm run test:cov
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
