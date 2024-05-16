@@ -1,12 +1,35 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
+import { CartList, GetItemList, PurchaseItem } from './models/item.model';
 
-@Controller()
+@Controller('/api/v1')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('/item')
+  async getItemList(
+    @Query() query: GetItemList
+  ) {
+    try {
+      const result = await this.appService.getItemList(query.itemTypeId);
+      const modelRes = {
+        data: result
+      };
+      return modelRes;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('/purchase')
+  async buyItem(
+    @Body() body: PurchaseItem
+  ) {
+    try {
+      const result = await this.appService.summaryCalculate(body);
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 }

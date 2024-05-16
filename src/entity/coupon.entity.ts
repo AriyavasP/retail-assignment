@@ -1,6 +1,5 @@
 // src/coupons/coupon.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Item } from './item.entity';
 
 @Entity()
 export class Coupon {
@@ -15,7 +14,4 @@ export class Coupon {
 
   @Column()
   couponCode: string;
-
-  @OneToMany(() => Item, item => item.coupon)
-  items: Item[];
 }
